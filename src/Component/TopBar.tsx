@@ -1,12 +1,21 @@
-import React from 'react';
+import React, {useContext} from 'react';
+import {LoggedInContext} from "Context/LoggedInContext";
+import {Link, useHistory} from "react-router-dom";
+
+// Material
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import InputBase from '@material-ui/core/InputBase';
-import { fade, makeStyles } from '@material-ui/core/styles';
+import {fade, makeStyles} from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
+import Button from '@material-ui/core/Button';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import ApiUrl from "apiUrl";
+
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -14,6 +23,10 @@ const useStyles = makeStyles(theme => ({
     },
     menuButton: {
         marginRight: theme.spacing(2),
+    },
+    toHome: {
+        color: "#fff",
+        textDecoration: "none",
     },
     title: {
         flexGrow: 1,
@@ -63,6 +76,25 @@ const useStyles = makeStyles(theme => ({
 
 export default function SearchAppBar() {
     const classes = useStyles();
+    const history = useHistory();
+    const loggedInContext = useContext(LoggedInContext);
+    const {isLoggedIn} = loggedInContext;
+
+    const loginHandler = () => {
+        history.push("/login");
+    };
+
+    const logoutHandler = async () => {
+        const response = await fetch(ApiUrl.logout,{
+            method:"POST",
+            credentials:'include',
+        });
+
+        if(response.status === 200){
+            loggedInContext.isLoggedIn = false;
+            history.push("/");
+        }
+    };
 
     return (
         <div className={classes.root}>
@@ -74,14 +106,18 @@ export default function SearchAppBar() {
                         color="inherit"
                         aria-label="open drawer"
                     >
-                        <MenuIcon />
+                        <MenuIcon/>
                     </IconButton>
-                    <Typography className={classes.title} variant="h6" noWrap>
-                        Codesnip
-                    </Typography>
+                    <div className={classes.title}>
+                        <Link className={classes.toHome} to="/">
+                            <Typography variant="h6" display="inline">
+                                Codesnip
+                            </Typography>
+                        </Link>
+                    </div>
                     <div className={classes.search}>
                         <div className={classes.searchIcon}>
-                            <SearchIcon />
+                            <SearchIcon/>
                         </div>
                         <InputBase
                             placeholder="Search…"
@@ -89,9 +125,19 @@ export default function SearchAppBar() {
                                 root: classes.inputRoot,
                                 input: classes.inputInput,
                             }}
-                            inputProps={{ 'aria-label': 'search' }}
+                            inputProps={{'aria-label': 'search'}}
                         />
                     </div>
+
+                    {isLoggedIn ?
+                        <Button color="inherit" onClick={logoutHandler} title="Logout">
+                            <ExitToAppIcon/>
+                        </Button>
+                        :
+                        <Button color="inherit" onClick={loginHandler} title="Login">
+                            <AccountCircleIcon/>
+                        </Button>
+                    }
                 </Toolbar>
             </AppBar>
         </div>
