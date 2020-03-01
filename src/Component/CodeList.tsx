@@ -80,7 +80,7 @@ export default function () {
     return (
         <div>
             <header className={codeListClasses.header}>
-                List of codes
+                Code snippets
             </header>
 
             <List className={listClasses.root}>

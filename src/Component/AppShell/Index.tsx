@@ -2,6 +2,7 @@ import React, {useContext} from 'react';
 import {LoggedInContext} from "Context/LoggedInContext";
 import {Link, useHistory} from "react-router-dom";
 import {getAuth, removeAuth} from "sessionStore";
+import SideMenu,{drawerWidth} from "Component/AppShell/SideMenu";
 
 // Material
 import AppBar from '@material-ui/core/AppBar';
@@ -15,15 +16,33 @@ import SearchIcon from '@material-ui/icons/Search';
 import Button from '@material-ui/core/Button';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+
 import ApiUrl from "apiUrl";
 
 
 const useStyles = makeStyles(theme => ({
     root: {
-        flexGrow: 1,
+        display:"flex",
     },
+
+    appBar: {
+        flexGrow: 1,
+        [theme.breakpoints.up('sm')]: {
+            width: `calc(100% - ${drawerWidth}px)`,
+            marginLeft: drawerWidth,
+        },
+    },
+
+    content: {
+        flexGrow: 1,
+        padding: theme.spacing(3),
+    },
+
     menuButton: {
         marginRight: theme.spacing(2),
+        [theme.breakpoints.up('sm')]: {
+            display: 'none',
+        },
     },
     toHome: {
         color: "#fff",
@@ -36,6 +55,7 @@ const useStyles = makeStyles(theme => ({
             display: 'block',
         },
     },
+    toolbar: theme.mixins.toolbar,
     search: {
         position: 'relative',
         borderRadius: theme.shape.borderRadius,
@@ -75,7 +95,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default function SearchAppBar() {
+const AppShell:React.FunctionComponent = (props) => {
     const classes = useStyles();
     const history = useHistory();
     const loggedInContext = useContext(LoggedInContext);
@@ -100,7 +120,7 @@ export default function SearchAppBar() {
 
     return (
         <div className={classes.root}>
-            <AppBar position="static">
+            <AppBar className={classes.appBar} position="fixed">
                 <Toolbar>
                     <IconButton
                         edge="start"
@@ -142,6 +162,13 @@ export default function SearchAppBar() {
                     }
                 </Toolbar>
             </AppBar>
+            <SideMenu />
+            <main className={classes.content}>
+                <div className={classes.toolbar} />
+                {props.children}
+            </main>
         </div>
     );
-}
+};
+
+export default AppShell;
