@@ -1,48 +1,100 @@
-import React from 'react';
+import React, {useContext} from 'react';
+
+import {NavLink, useHistory} from "react-router-dom";
+
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import CodeIcon from '@material-ui/icons/Code';
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 
+import {LoggedInContext} from "Context/LoggedInContext";
+import {getAuth, removeAuth} from "sessionStore";
+import ApiUrl from "apiUrl";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
+        active: {
+            "& .MuiTypography-root": {
+                fontWeight: "bold",
+            }
+        },
         toolbar: theme.mixins.toolbar,
     }),
 );
 
-export default function(){
+export default function () {
     const classes = useStyles();
+    const history = useHistory();
+    const loggedInContext = useContext(LoggedInContext);
+    const {isLoggedIn} = loggedInContext;
 
-    const clickHandler = (event:React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        console.log(11111);
+    const signOutHandler = async () => {
+        const response = await fetch(ApiUrl.logout,{
+            method:"POST",
+            credentials:'include',
+        });
+
+        if(response.status === 200){
+            removeAuth();
+            loggedInContext.isLoggedIn = getAuth();
+            history.push("/");
+        }
     };
 
     return (
-        <div>
-            <div className={classes.toolbar} />
-            <Divider />
+        <>
+            <div className={classes.toolbar}/>
             <List>
-                {['Code snippets'].map((text, index) => (
-                    <ListItem button key={text} onClick={clickHandler}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                        <ListItemText primary={text} />
-                    </ListItem>
-                ))}
+                <ListItem button component={NavLink} exact to="/" activeClassName={classes.active}>
+                    <ListItemIcon>
+                        <CodeIcon/>
+                    </ListItemIcon>
+                    <ListItemText primary="Code Snippets"/>
+                </ListItem>
             </List>
-            <Divider />
+            <Divider/>
             <List>
-                {['Sign up','Sign in'].map((text, index) => (
-                    <ListItem button key={text} onClick={clickHandler}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                        <ListItemText primary={text} />
-                    </ListItem>
-                ))}
+                {
+                    isLoggedIn ?
+                        <>
+                            <ListItem button component={NavLink} exact to="/createCode" activeClassName={classes.active}>
+                                <ListItemIcon>
+                                    <AccountCircleIcon/>
+                                </ListItemIcon>
+                                <ListItemText primary="My snippets"/>
+                            </ListItem>
+
+                            <ListItem button onClick={signOutHandler}>
+                                <ListItemIcon>
+                                    <AccountCircleIcon/>
+                                </ListItemIcon>
+                                <ListItemText primary="Sign out"/>
+                            </ListItem>
+                        </>
+                        :
+                    <>
+                        <ListItem button component={NavLink} exact to="/login" activeClassName={classes.active}>
+                            <ListItemIcon>
+                                <AccountCircleIcon/>
+                            </ListItemIcon>
+                            <ListItemText primary="Sign in"/>
+                        </ListItem>
+
+                        <ListItem button component={NavLink} exact to="/createUser"
+                                  activeClassName={classes.active}>
+                            <ListItemIcon>
+                                <PersonAddIcon/>
+                            </ListItemIcon>
+                            <ListItemText primary="Sign up"/>
+                        </ListItem>
+                    </>
+                }
             </List>
-        </div>
+        </>
     )
 };

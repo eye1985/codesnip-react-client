@@ -38,6 +38,10 @@ function App() {
                                 <h1>Under dev</h1>
                             </Route>
 
+                            <Route exact path="/createCode">
+                                <h1>Under dev</h1>
+                            </Route>
+
                             <Route exact path="/login" component={Login} />
                         </Switch>
                     </Container>

@@ -1,7 +1,5 @@
-import React, {useContext} from 'react';
-import {LoggedInContext} from "Context/LoggedInContext";
-import {Link, useHistory} from "react-router-dom";
-import {getAuth, removeAuth} from "sessionStore";
+import React from 'react';
+import {Link} from "react-router-dom";
 import SideMenu,{drawerWidth} from "Component/AppShell/SideMenu";
 
 // Material
@@ -13,12 +11,6 @@ import InputBase from '@material-ui/core/InputBase';
 import {fade, makeStyles} from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
-import Button from '@material-ui/core/Button';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-
-import ApiUrl from "apiUrl";
-
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -97,26 +89,6 @@ const useStyles = makeStyles(theme => ({
 
 const AppShell:React.FunctionComponent = (props) => {
     const classes = useStyles();
-    const history = useHistory();
-    const loggedInContext = useContext(LoggedInContext);
-    const {isLoggedIn} = loggedInContext;
-
-    const loginHandler = () => {
-        history.push("/login");
-    };
-
-    const logoutHandler = async () => {
-        const response = await fetch(ApiUrl.logout,{
-            method:"POST",
-            credentials:'include',
-        });
-
-        if(response.status === 200){
-            removeAuth();
-            loggedInContext.isLoggedIn = getAuth();
-            history.push("/");
-        }
-    };
 
     return (
         <div className={classes.root}>
@@ -150,16 +122,6 @@ const AppShell:React.FunctionComponent = (props) => {
                             inputProps={{'aria-label': 'search'}}
                         />
                     </div>
-
-                    {isLoggedIn ?
-                        <Button color="inherit" onClick={logoutHandler} title="Logout">
-                            <ExitToAppIcon/>
-                        </Button>
-                        :
-                        <Button color="inherit" onClick={loginHandler} title="Login">
-                            <AccountCircleIcon/>
-                        </Button>
-                    }
                 </Toolbar>
             </AppBar>
             <SideMenu />
