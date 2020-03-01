@@ -1,6 +1,7 @@
 import React, {useState, useContext, FormEvent} from "react";
 import {useHistory} from "react-router-dom";
 
+import {setAuth,getAuth} from "sessionStore";
 import {LoggedInContext} from "Context/LoggedInContext";
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -41,7 +42,8 @@ export default function(){
         });
 
         if (response.status === 200){
-            loggedInContext.isLoggedIn = true;
+            setAuth(true);
+            loggedInContext.isLoggedIn = getAuth();
             history.push("/");
         }
     };

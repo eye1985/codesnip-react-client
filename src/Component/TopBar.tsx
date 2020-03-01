@@ -1,6 +1,7 @@
 import React, {useContext} from 'react';
 import {LoggedInContext} from "Context/LoggedInContext";
 import {Link, useHistory} from "react-router-dom";
+import {getAuth, removeAuth} from "sessionStore";
 
 // Material
 import AppBar from '@material-ui/core/AppBar';
@@ -91,7 +92,8 @@ export default function SearchAppBar() {
         });
 
         if(response.status === 200){
-            loggedInContext.isLoggedIn = false;
+            removeAuth();
+            loggedInContext.isLoggedIn = getAuth();
             history.push("/");
         }
     };
