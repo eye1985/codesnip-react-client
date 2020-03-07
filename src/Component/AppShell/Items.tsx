@@ -10,10 +10,11 @@ import ListItemText from '@material-ui/core/ListItemText';
 import CodeIcon from '@material-ui/icons/Code';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 
 import {LoggedInContext} from "Context/LoggedInContext";
-import {getAuth, removeAuth} from "sessionStore";
+import {getAuth, removeAuth, removeUserId} from "sessionStore";
 import ApiUrl from "apiUrl";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -41,7 +42,9 @@ export default function () {
 
         if(response.status === 200){
             removeAuth();
+            removeUserId();
             loggedInContext.isLoggedIn = getAuth();
+            loggedInContext.id = null;
             history.push("/");
         }
     };
@@ -62,7 +65,14 @@ export default function () {
                 {
                     isLoggedIn ?
                         <>
-                            <ListItem button component={NavLink} exact to="/createCode" activeClassName={classes.active}>
+                            <ListItem button component={NavLink} exact to="/createSnippet" activeClassName={classes.active}>
+                                <ListItemIcon>
+                                    <AddCircleOutlineIcon/>
+                                </ListItemIcon>
+                                <ListItemText primary="Create snippet"/>
+                            </ListItem>
+
+                            <ListItem button component={NavLink} exact to="/mySnippet" activeClassName={classes.active}>
                                 <ListItemIcon>
                                     <AccountCircleIcon/>
                                 </ListItemIcon>

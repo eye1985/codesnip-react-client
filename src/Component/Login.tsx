@@ -1,13 +1,17 @@
 import React, {useState, useContext, FormEvent} from "react";
 import {useHistory} from "react-router-dom";
 
-import {setAuth,getAuth} from "sessionStore";
+import {setAuth,getAuth, setUserId, getUserId} from "sessionStore";
 import {LoggedInContext} from "Context/LoggedInContext";
 
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import ApiUrl from "apiUrl";
+
+interface LoggedInResponse {
+    userid : string
+}
 
 export default function(){
     const history = useHistory();
@@ -41,9 +45,14 @@ export default function(){
             body:formData
         });
 
+        const responseJson:LoggedInResponse = await response.json();
+
         if (response.status === 200){
             setAuth(true);
+            setUserId(responseJson.userid);
             loggedInContext.isLoggedIn = getAuth();
+            loggedInContext.id = getUserId();
+
             history.push("/");
         }
     };
