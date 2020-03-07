@@ -6,8 +6,12 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import TextField from '@material-ui/core/TextField';
 import Select from '@material-ui/core/Select';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
 import MenuItem from '@material-ui/core/MenuItem';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
 import Button from '@material-ui/core/Button';
 
 import "ace-builds/src-noconflict/mode-html";
@@ -76,6 +80,10 @@ const CreateSnippet = () => {
     const [desc, setDesc] = useState("");
     const [languages, setLanguages] = useState([]);
     const [language, setLanguage] = useState("");
+
+    const [publicCode, setPublicCode] = useState("true");
+
+
     const [mode, setMode] = useState("javascript");
     const [code, setCode] = useState("");
     const [disabled, setDisabled] = useState(false);
@@ -92,6 +100,10 @@ const CreateSnippet = () => {
 
     const handleDesc = (event: React.ChangeEvent<HTMLInputElement>) => {
         setDesc(event.target.value);
+    };
+
+    const handlePublic = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setPublicCode((event.target as HTMLInputElement).value);
     };
 
     const createCode = async () => {
@@ -150,6 +162,14 @@ const CreateSnippet = () => {
                 />
             </FormControl>
 
+            <FormControl component="fieldset" className={classes.formControl}>
+                <FormLabel component="legend">Visibility</FormLabel>
+                <RadioGroup aria-label="public" name="public" value={publicCode} onChange={handlePublic}>
+                    <FormControlLabel value="true" control={<Radio />} label="Public" />
+                    <FormControlLabel value="false" control={<Radio />} label="Private" />
+                </RadioGroup>
+            </FormControl>
+
             <FormControl className={classes.formControl}>
                 <InputLabel id="snippetLanguage">
                     Language
@@ -188,6 +208,5 @@ const CreateSnippet = () => {
         </form>
     )
 };
-
 
 export default CreateSnippet;

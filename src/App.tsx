@@ -28,9 +28,7 @@ function App() {
                 <AppShell>
                     <Container maxWidth="xl">
                         <Switch>
-                            <Route exact path="/">
-                                <CodeList/>
-                            </Route>
+                            <Route exact path="/" component={CodeList} />
 
                             <Route path={`/user/:userId/code/:codeId`}>
                                 <Code />
