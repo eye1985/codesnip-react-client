@@ -1,5 +1,8 @@
-import React, {useEffect, useState} from 'react';
-import {Link} from "react-router-dom";
+import React, {useEffect, useState, useContext} from 'react';
+import {Link, RouteComponentProps} from "react-router-dom";
+
+import ApiUrl from "apiUrl";
+import {LoggedInContext} from "Context/LoggedInContext";
 
 import {Pagination} from '@material-ui/lab';
 import {makeStyles} from '@material-ui/core/styles';
@@ -49,33 +52,48 @@ interface CodeListItem {
     username: string
 }
 
-export default function () {
+export default function (props:RouteComponentProps) {
+    const loggedInContext = useContext(LoggedInContext);
+
     const listClasses = useListStyles();
     const codeListClasses = useCodeListStyles();
     const paginationClasses = usePaginationStyles();
-
-    const getCodesUrl = (param: string) => `http://localhost:3000/v1/codes?${param}`;
 
     const [codes, setCodes] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
     const [searchParams, setSearchParams] = useState("start=1&hitPerPage=10");
 
+    const isMySnippet = props.location.pathname === "/mySnippet";
+
     useEffect(() => {
-        const getData = async () => {
-            const response = await fetch(getCodesUrl(searchParams));
+        const getData = async (url:string) => {
+            const response = await fetch(url,{
+                method:"get",
+                credentials:'include',
+            });
             const data = await response.json();
 
-            setCodes(data.codes)
+            setCodes(data.codes);
             setTotalPages(data.totalPage);
         };
 
-        getData();
-    }, [searchParams]);
+        if(isMySnippet){
+            const userId = loggedInContext.id;
+            if(userId){
+                getData(`${ApiUrl.userCodes(userId)}?${searchParams}`);
+            }
+        }else{
+            getData(`${ApiUrl.codes}?${searchParams}`);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.location.pathname]);
 
-    const handleChange = (event: any, value: number) => {
+    const handleChange = (event:React.ChangeEvent, value: number) => {
         value -= 1;
         setSearchParams(`start=${(value * 10) + 1}&hitPerPage=10`)
     };
+
+    const urlPrefix = isMySnippet ? `/mySnippet/user/` : `/user/`;
 
     return (
         <div>
@@ -84,11 +102,11 @@ export default function () {
             </header>
 
             <List className={listClasses.root}>
-                {codes.map((code: CodeListItem, index) => {
+                {codes && codes.map((code: CodeListItem, index) => {
                     return (
                         <ListItem key={index}
                                   alignItems="flex-start">
-                            <Link className={listClasses.link} to={`/user/${code.userId}/code/${code.codeId}`}>
+                            <Link className={listClasses.link} to={`${urlPrefix}${code.userId}/code/${code.codeId}`}>
                                 <ListItemAvatar>
                                     <Avatar alt="Remy Sharp" src=""/>
                                 </ListItemAvatar>

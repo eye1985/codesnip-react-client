@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react';
 import ApiUrl from "apiUrl";
 import {LoggedInContext} from "Context/LoggedInContext";
+import {languageMap} from "model/language";
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -34,23 +35,6 @@ interface IdAndLanguage {
     id : string,
     language : string
 }
-
-interface LanguageMap {
-    [key:number]:string
-}
-
-const languageMap:LanguageMap = {
-    1: "html",
-    2 : "css",
-    3 : "scss",
-    4 : "less",
-    5 : "javascript",
-    6 : "typescript",
-    7 : "golang",
-    8 : "csharp",
-    9 : "razor",
-    10 : "sql",
-};
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

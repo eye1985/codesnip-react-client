@@ -35,18 +35,16 @@ export default function () {
     const {isLoggedIn} = loggedInContext;
 
     const signOutHandler = async () => {
-        const response = await fetch(ApiUrl.logout,{
+        await fetch(ApiUrl.logout,{
             method:"POST",
             credentials:'include',
         });
 
-        if(response.status === 200){
-            removeAuth();
-            removeUserId();
-            loggedInContext.isLoggedIn = getAuth();
-            loggedInContext.id = null;
-            history.push("/");
-        }
+        removeAuth();
+        removeUserId();
+        loggedInContext.isLoggedIn = getAuth();
+        loggedInContext.id = null;
+        history.push("/");
     };
 
     return (
@@ -72,7 +70,7 @@ export default function () {
                                 <ListItemText primary="Create snippet"/>
                             </ListItem>
 
-                            <ListItem button component={NavLink} exact to="/mySnippet" activeClassName={classes.active}>
+                            <ListItem button component={NavLink} to="/mySnippet" activeClassName={classes.active}>
                                 <ListItemIcon>
                                     <AccountCircleIcon/>
                                 </ListItemIcon>

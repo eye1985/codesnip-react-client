@@ -29,21 +29,15 @@ function App() {
                     <Container maxWidth="xl">
                         <Switch>
                             <Route exact path="/" component={CodeList} />
-
-                            <Route path={`/user/:userId/code/:codeId`}>
-                                <Code />
-                            </Route>
+                            <Route path={`/user/:userId/code/:codeId`} component={Code} />
 
                             <Route exact path="/createUser">
                                 <h1>Under dev</h1>
                             </Route>
 
                             <Route exact path="/createSnippet" component={CreateSnippet} />
-
-                            <Route exact path="/mySnippet">
-                                <h1>Under dev</h1>
-                            </Route>
-
+                            <Route exact path="/mySnippet" component={CodeList} />
+                            <Route path={`/mySnippet/user/:userId/code/:codeId`} component={Code} />
                             <Route exact path="/login" component={Login} />
                         </Switch>
                     </Container>

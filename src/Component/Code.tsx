@@ -1,6 +1,9 @@
 import React, { useState, useEffect} from 'react';
+import ApiUrl from "apiUrl";
+import {languageMap} from "model/language";
+
 import Button from '@material-ui/core/Button';
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams, RouteComponentProps } from "react-router-dom";
 import AceEditor from "react-ace";
 
 import "ace-builds/src-noconflict/mode-javascript";
@@ -12,7 +15,7 @@ interface CodeParam {
     codeId: string,
 }
 
-export default function () {
+export default function (props:RouteComponentProps) {
     const history = useHistory();
     const params = useParams();
     const {userId, codeId} = (params as CodeParam);
@@ -20,22 +23,32 @@ export default function () {
     const [code, setCode] = useState("Loading code");
     const [title, setTitle] = useState("Loading title");
     const [desc, setDesc] = useState("Loading desc");
+    const [language, setLanguage] = useState("javascript");
 
     const backHandler = () => {
+        const isUnderMySnippet = props.location.pathname.indexOf("/mySnippet") !== -1;
+
+        if(isUnderMySnippet){
+            return history.push("/mySnippet");
+        }
+
         history.push("/");
     };
 
-    const getCodeUrl = (userCode: string, codeId: string) =>
-        `http://localhost:3000/v1/user/${userCode}/code/${codeId}`;
-
     useEffect(() => {
         (async function(){
-            const response = await fetch(getCodeUrl(userId,codeId));
+            const response = await fetch(ApiUrl.userCode(userId,codeId),{
+                method:"get",
+                credentials:"include"
+            });
+
             const json = await response.json();
+            setLanguage(languageMap[parseInt(json.languageId)]);
             setCode(json.code);
             setTitle(json.title);
             setDesc(json.description);
         })()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
 
     return (
@@ -53,9 +66,9 @@ export default function () {
             </article>
 
             <AceEditor
-                mode="javascript"
+                mode={language}
                 theme="monokai"
-                name="UNIQUE_ID_OF_DIV"
+                name="myCode"
                 readOnly={true}
                 width="100%"
                 value={code}
