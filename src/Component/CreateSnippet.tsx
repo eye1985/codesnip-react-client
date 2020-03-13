@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react';
 import ApiUrl from "apiUrl";
 import {LoggedInContext} from "Context/LoggedInContext";
-import {languageMap} from "model/language";
+import {languageMap, IdAndLanguage} from "model/language";
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -26,15 +26,12 @@ import "ace-builds/src-noconflict/mode-csharp";
 import "ace-builds/src-noconflict/mode-razor";
 import "ace-builds/src-noconflict/mode-sql";
 
+import "ace-builds/src-noconflict/ext-language_tools";
+
 import "ace-builds/src-noconflict/theme-monokai";
 import "ace-builds/webpack-resolver";
 import AceEditor from "react-ace";
 import {useHistory} from "react-router-dom";
-
-interface IdAndLanguage {
-    id : string,
-    language : string
-}
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -63,7 +60,7 @@ const CreateSnippet = () => {
     const [title, setTitle] = useState("");
     const [desc, setDesc] = useState("");
     const [languages, setLanguages] = useState([]);
-    const [language, setLanguage] = useState("");
+    const [language, setLanguage] = useState("5");
 
     const [publicCode, setPublicCode] = useState("true");
 
@@ -181,6 +178,12 @@ const CreateSnippet = () => {
                 theme="monokai"
                 name="createSnippet"
                 width="100%"
+                fontSize={16}
+                showPrintMargin={false}
+                enableBasicAutocompletion={true}
+                enableLiveAutocompletion={true}
+                enableSnippets={true}
+                highlightActiveLine={true}
                 onChange={setCode}
                 value={code}
                 editorProps={{ $blockScrolling: true }}

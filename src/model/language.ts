@@ -2,6 +2,11 @@ interface LanguageMap {
     [key:number]:string
 }
 
+export interface IdAndLanguage {
+    id : string,
+    language : string
+}
+
 export const languageMap:LanguageMap = {
     1: "html",
     2 : "css",
